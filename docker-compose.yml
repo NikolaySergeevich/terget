@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: terget_control
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "5438:5432"
+    networks:
+      - target_postgres
+    volumes:
+      - ./database/terget_control_db.sql:/docker-entrypoint-initdb.d/terget_control_db.sql
+      - target_db_data:/var/lib/postgresql/data
+  pgadmin-compose:
+      image: dpage/pgadmin4
+      environment:
+        PGADMIN_DEFAULT_EMAIL: "test@gmail.com"
+        PGADMIN_DEFAULT_PASSWORD: "test123"
+      ports:
+        - "16547:80"
+      networks:
+        - target_postgres
+      volumes:
+        - target_pgadmin_data:/var/lib/pgadmin
+      depends_on:
+        - postgres
+
+networks:
+  target_postgres:
+    driver: bridge
+volumes:
+  target_db_data:
+  target_pgadmin_data:
